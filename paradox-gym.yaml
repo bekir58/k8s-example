@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: paradox-gym-deployment
+  namespace: bekir
+  labels:
+    app: paradox-gym-deployment
+    version: "1.0"
+spec:   
+  replicas: 3
+  selector:
+    matchLabels:
+      app: paradox-gym-server
+  template:
+    metadata:
+      namespace: bekir
+      labels:
+        app: paradox-gym-server
+    spec:
+      containers:
+      - name: paradox-gym-server
+        image: kiper58/paradox-gym
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: paradox-gym-service
+  namespace: bekir
+  labels:
+    app: paradox-gym
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  selector:
+    app: paradox-gym-server  
+
